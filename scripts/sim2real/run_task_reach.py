@@ -118,12 +118,12 @@ class ReachPolicy(Node):
         """
         actual_pos = {}
         for i, joint_name in enumerate(msg.joint_names):
-            joint_pos = msg.actual.positions[i]
+            joint_pos = msg.feedback.positions[i]
             actual_pos[joint_name] = joint_pos
         self.current_pos = actual_pos
         
         # Update the robot's state with current joint positions and velocities.
-        self.robot.update_joint_state(msg.actual.positions, msg.actual.velocities)
+        self.robot.update_joint_state(msg.feedback.positions, msg.feedback.velocities)
 
     def map_joint_angle(self, pos: float, index: int) -> float:
         """
@@ -167,6 +167,13 @@ class ReachPolicy(Node):
             self.target_command = np.array([0.4, -0.15, 0.3, 0.7071, 0.0, 0.7071, 0.0])
         else:
             self.target_command = np.array([0.6, 0.1, 0.45, 0.7071, 0.0, 0.7071, 0.0])
+
+        # if self.i%3000 < 1000:
+        #     self.target_command = np.array([0.0, 0.262, 3.14, -2.269, 0.0, 0.96, 1.57])
+        # elif self.i%3000 < 2000 and self.i%3000 > 1000:
+        #     self.target_command = np.array([0.2, 0.262, 3.14, -2.269, 0.0, 0.96, 1.57])
+        # else:
+        #     self.target_command = np.array([-0.2, 0.262, 3.14, -2.269, 0.0, 0.96, 1.57])
 
         # Get simulation joint positions from the robot's forward model
         joint_pos = self.robot.forward(self.step_size, self.target_command)
